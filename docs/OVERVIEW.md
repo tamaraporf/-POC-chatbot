@@ -25,15 +25,15 @@ Documento descritivo do que foi criado: estrutura de código, dados, fluxos de R
 ### Diagrama Mermaid
 ```mermaid
 flowchart TD
-    A[Cliente/API] --> B["FastAPI<br/>/chat /pedido /healthz"]
+    A[Cliente API] --> B[FastAPI chat pedido healthz]
     B --> C[Roteamento simples]
-    C --> D["Retrieval TF-IDF<br/>kb.json (+ policies/users futuro)"]
-    D --> E{Geração}
-    E --> F["OpenAI Chat<br/>OPENAI_API_KEY"]
-    E --> G["Gemini<br/>GEMINI_API_KEY"]
-    E --> H["Hugging Face<br/>HF_MODEL + torch"]
-    E --> I["Fallback KB"]
-    B --> J["/pedido/{order_id}<br/>orders.json"]
+    C --> D[Retrieval TF-IDF kb]
+    D --> E{Geracao}
+    E --> F[OpenAI API]
+    E --> G[Gemini API]
+    E --> H[Hugging Face]
+    E --> I[Fallback KB]
+    B --> J[Pedido orders]
 ```
 
 ### Fluxo RAG detalhado (Mermaid)
@@ -42,7 +42,7 @@ sequenceDiagram
     participant U as Usuario
     participant A as FastAPI chat
     participant R as Retriever TF-IDF
-    participant G as Gerador (OpenAI/Gemini/HF)
+    participant G as Gerador
     U->>A: mensagem
     A->>R: busca top-k KB
     R-->>A: evidencias
@@ -54,14 +54,14 @@ sequenceDiagram
 ### Fluxo de Fine-tuning (Mermaid)
 ```mermaid
 flowchart LR
-    A[Coletar exemplos] --> B[Formatar JSONL messages]
-    B --> C[Upload Files API]
+    A[Coletar exemplos] --> B[Formatar JSONL]
+    B --> C[Upload file]
     C --> D[Criar job FT]
     D --> E[Acompanhar status]
     E --> F[Modelo FT pronto]
-    F --> G[Usar no app OPENAI_MODEL=ft-...]
-    B -.-> H[Separar val/test]
-    F -.-> I[AB ou flag rollout]
+    F --> G[Usar no app]
+    B -.-> H[Separar val test]
+    F -.-> I[AB rollout]
 ```
 
 ## Módulos e Responsabilidades
@@ -81,6 +81,7 @@ flowchart LR
 - `data/policies.json`: políticas detalhadas (reembolso, atraso, cancelamento, alergia, segurança).
 - `data/users.json`: 100 usuários (região, tier, canal, flags, ticket médio).
 - `data/ft_openai.jsonl`: exemplos de chat para FT (tom empático, respostas curtas).
+- Índice vetorial: `data/kb_index.joblib` (gerado com `python -m app.ingest`), usado pelo `VectorRetriever`.
 
 ## Fluxo `/chat` (detalhado)
 1) Recebe `mensagem` em POST `/chat`.
@@ -151,3 +152,38 @@ curl http://127.0.0.1:8000/pedido/PED-123
 - Modelos: definir ordem de fallback (OpenAI → Gemini → HF → KB), timeouts/retries; versionar prompts e modelos; FT com flag/AB para rollout seguro.
 - Avaliação: suite de casos críticos (RAG/pedidos), testes automatizados no CI, canary/AB em produção; métricas de groundedness e “não sei”.
 - Operação: rollback rápido (última imagem), rotação de chaves, reindexação periódica do KB, revisão de logs e feedback humano para melhorar prompts/FT.
+
+## Pipeline de Dados (POC vs Robust)
+- POC (simples):
+  - Ingestão: ler arquivos locais (FAQ/políticas/pedidos) e validar campos básicos.
+  - Chunk/Index: blocos curtos; TF-IDF ou embeddings simples em memória/FAISS local.
+  - QA rápido: poucos casos sintéticos/golden para checar recuperação e resposta plausível.
+  - Publicação: índice junto com a app; versão manual (nome/sha do arquivo).
+  - Monitoramento leve: logs de consultas sem resposta/erro.
+- Robust (produção):
+  - Ingestão contínua com validação de esquema, timestamps/versão do corpus.
+  - Limpeza/enriquecimento: dedupe, metadados (região, canal, idioma), mascarar PII.
+  - Chunk/Embeddings: blocos 200–400 tokens com overlap; embeddings consistentes; indexação em pgvector/Qdrant.
+  - Validação/QA: testes de integridade do índice; suite de casos críticos para groundedness/precisão/“não sei”.
+  - Publicação/rollback: versionar corpus+índice; canary/flag; rollback fácil.
+- Observabilidade: métricas de recall/groundedness online, alertas para quedas; logs estruturados.
+- Governança: retenção e anonimização; rastreabilidade de versões; feedback humano para iterar (ingestão/FT/prompt).
+
+## Pipeline Integrado (dados + produção) - Mermaid
+```mermaid
+flowchart LR
+    subgraph POC
+        P1["Ingestao simples<br/>arquivos locais"] --> P2["Chunk + Index<br/>TF-IDF ou embeddings em memoria"]
+        P2 --> P3["QA rapido<br/>casos sinteticos"]
+        P3 --> P4["Publicacao<br/>indice junto app"]
+        P4 --> P5["Monitoramento leve<br/>logs e consultas sem resposta"]
+    end
+    subgraph PROD
+        R1["Ingestao continua<br/>ETL + esquema + versao"] --> R2["Limpeza + Metadados<br/>dedupe, PII mascarada"]
+        R2 --> R3["Chunk + Embeddings<br/>pgvector/Qdrant/FAISS"]
+        R3 --> R4["QA + Suite critica<br/>groundedness / 'nao sei'"]
+        R4 --> R5["Publicacao/rollback<br/>versao de indice"]
+        R5 --> R6["Observabilidade<br/>tracing, alertas, custo"]
+        R6 --> R7["Governanca<br/>retencao, feedback humano"]
+    end
+```

@@ -17,7 +17,29 @@ echo "GEMINI_MODEL=gemini-1.5-flash" >> .env   # opcional, default já é gemini
 # Ou uso de modelo Hugging Face (precisa torch instalado)
 # export HF_MODEL=google/flan-t5-small
 
+# Auth simples (opcional)
+# echo "API_KEY=chave-secreta" >> .env
+
 uvicorn app.main:app --reload
+```
+Testes rápidos:
+```bash
+curl http://127.0.0.1:8000/healthz
+curl -X POST http://127.0.0.1:8000/chat -H "Content-Type: application/json" -d '{"mensagem":"Meu pedido atrasou"}' \
+  -H "X-API-Key: chave-secreta"   # se configurar API_KEY
+curl http://127.0.0.1:8000/pedido/PED-123 -H "X-API-Key: chave-secreta"
+```
+
+### Ingestão/índice vetorial (simples)
+- Para usar o retriever vetorial salvo em disco:
+```bash
+python -m app.ingest  # gera data/kb_index.joblib
+```
+- O app usa `kb_index.joblib` se existir; caso contrário, cai no TF-IDF em memória.
+
+### Testes
+```bash
+pytest
 ```
 
 ## Base conceitual (antes do código)

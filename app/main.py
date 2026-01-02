@@ -9,15 +9,20 @@ Fluxo:
 import os
 import logging
 from pathlib import Path
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
+from .auth import verify_api_key
 from .retriever import KnowledgeBaseRetriever
+from .vector_retriever import VectorRetriever
 from .orders import get_order
+from .policies import get_policy
+from .users import get_user
 from .llm_hf import get_hf_pipeline
 from .openai_client import get_openai_client, generate_with_context
 from .gemini_client import get_gemini_model, generate_with_context as gemini_generate
+from .router import detect_intent
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -46,6 +51,8 @@ app = FastAPI(title="Chatbot Suporte Entregas", version="0.1.0")
 data_dir = Path(__file__).resolve().parent.parent / "data"
 kb_path = data_dir / "kb.json"
 retriever = KnowledgeBaseRetriever(kb_path)
+index_path = data_dir / "kb_index.joblib"
+vector_retriever = VectorRetriever(index_path, top_k=3) if index_path.exists() else None
 USE_HF = os.getenv("HF_MODEL") is not None
 hf_pipe = _load_hf_pipeline() if USE_HF else None
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
@@ -98,10 +105,45 @@ def healthcheck() -> dict:
     return {"status": "ok"}
 
 
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/chat", response_model=ChatResponse, dependencies=[Depends(verify_api_key)])
 def chat(req: ChatRequest) -> ChatResponse:
-    """Busca no KB e responde; se houver HF_MODEL, gera texto usando HF."""
-    resultados = retriever.retrieve(req.mensagem)
+    """Busca no KB e responde; se houver modelo, gera texto usando evidência."""
+    intent = detect_intent(req.mensagem)
+    # preferir índice vetorial, se existir
+    if vector_retriever:
+        resultados = vector_retriever.retrieve(req.mensagem)
+    else:
+        resultados = retriever.retrieve(req.mensagem)
+
+    # Respostas específicas por intenção simples
+    if intent == "pedido":
+        # Tentar extrair PED- na mensagem
+        # Reuso do endpoint /pedido não está integrado; aqui perguntamos pelo id.
+        return ChatResponse(
+            resposta="Para consultar ou agir em um pedido, compartilhe o código (PED-123).",
+            fonte=None,
+            via_modelo=False,
+            aviso_modelo="Intent pedido detectada; aguardando ID.",
+        )
+    if intent == "politica":
+        pol = get_policy("reembolso") or {}
+        resposta_pol = pol.get(
+            "passos",
+            "Consigo ajudar com políticas de reembolso, atraso, cancelamento e alergia.",
+        )
+        return ChatResponse(
+            resposta=f"Política exemplo (reembolso): {resposta_pol}",
+            fonte="policies.json",
+            via_modelo=False,
+            aviso_modelo="Intent política detectada; usando política mock.",
+        )
+    if intent == "usuario":
+        return ChatResponse(
+            resposta="Para consultar um usuário, informe o código (ex.: USR-001).",
+            fonte=None,
+            via_modelo=False,
+            aviso_modelo="Intent usuario detectada; aguardando ID.",
+        )
     if not resultados:
         return ChatResponse(
             resposta="Não encontrei nada no KB. Pode reformular ou dar mais detalhes?",
@@ -179,7 +221,7 @@ def chat(req: ChatRequest) -> ChatResponse:
     )
 
 
-@app.get("/pedido/{order_id}", response_model=OrderResponse)
+@app.get("/pedido/{order_id}", response_model=OrderResponse, dependencies=[Depends(verify_api_key)])
 def pedido(order_id: str) -> OrderResponse:
     """Consulta um pedido mock pelo ID (formato PED-123)."""
     order = get_order(order_id)

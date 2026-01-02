@@ -11,6 +11,9 @@ __pycache__/
 # Dados/cache
 .DS_Store
 
+# Índices/artefatos locais
+data/*.joblib
+
 # Logs
 *.log
 
