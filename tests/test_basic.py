@@ -1,3 +1,4 @@
+"""Testes básicos de saúde, chat e pedido (sem API_KEY)."""
 import os
 
 import pytest

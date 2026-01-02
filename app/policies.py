@@ -1,4 +1,4 @@
-"""Utilitário para políticas mockadas."""
+"""Utilitário para políticas mockadas carregadas de data/policies.json."""
 
 import json
 from pathlib import Path

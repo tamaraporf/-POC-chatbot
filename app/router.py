@@ -1,4 +1,4 @@
-"""Roteador simples de intenções."""
+"""Roteador simples de intenções para o chat."""
 
 from typing import Literal
 

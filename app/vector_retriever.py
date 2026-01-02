@@ -1,4 +1,4 @@
-"""Retriever baseado em índice TF-IDF salvo em disco."""
+"""Retriever baseado em índice TF-IDF salvo em disco (joblib)."""
 
 from pathlib import Path
 from typing import List, Dict, Any

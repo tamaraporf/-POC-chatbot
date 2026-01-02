@@ -1,4 +1,4 @@
-"""Utilitário para usuários mockados."""
+"""Utilitário para usuários mockados carregados de data/users.json."""
 
 import json
 from pathlib import Path
