@@ -22,46 +22,55 @@ Documento descritivo do que foi criado: estrutura de código, dados, fluxos de R
 [/pedido/{order_id}] -> lookup em data/orders.json
 ```
 
-### Diagrama Mermaid
+### Diagramas Mermaid (e ASCII de apoio)
+
+Arquitetura (Mermaid):
 ```mermaid
 flowchart TD
-    A[Cliente API] --> B[FastAPI chat pedido healthz]
-    B --> C[Roteamento simples]
-    C --> D[Retrieval TF-IDF kb]
-    D --> E{Geracao}
-    E --> F[OpenAI API]
-    E --> G[Gemini API]
-    E --> H[Hugging Face]
-    E --> I[Fallback KB]
-    B --> J[Pedido orders]
+    A[Client] --> B[FastAPI]
+    B --> C[Router]
+    C --> D[Retrieval]
+    D --> E{Generation}
+    E --> F[OpenAI]
+    E --> G[Gemini]
+    E --> H[HF]
+    E --> I[KB fallback]
+    B --> J[Orders endpoint]
 ```
 
-### Fluxo RAG detalhado (Mermaid)
+Fluxo RAG (Mermaid):
 ```mermaid
 sequenceDiagram
-    participant U as Usuario
-    participant A as FastAPI chat
-    participant R as Retriever TF-IDF
-    participant G as Gerador
-    U->>A: mensagem
-    A->>R: busca top-k KB
-    R-->>A: evidencias
-    A->>G: prompt com evidencias + pergunta
-    G-->>A: resposta gerada
-    A-->>U: resposta + fonte + via_modelo
+    participant U as User
+    participant API as API
+    participant RET as Retriever
+    participant GEN as Generator
+    U->>API: message
+    API->>RET: query
+    RET-->>API: evidence
+    API->>GEN: prompt + evidence
+    GEN-->>API: answer
+    API-->>U: reply
 ```
 
-### Fluxo de Fine-tuning (Mermaid)
+Fluxo de Fine-tuning (Mermaid):
 ```mermaid
 flowchart LR
-    A[Coletar exemplos] --> B[Formatar JSONL]
-    B --> C[Upload file]
-    C --> D[Criar job FT]
-    D --> E[Acompanhar status]
-    E --> F[Modelo FT pronto]
-    F --> G[Usar no app]
-    B -.-> H[Separar val test]
+    A[Examples] --> B[JSONL]
+    B --> C[Upload]
+    C --> D[FT job]
+    D --> E[FT model]
+    E --> F[Use in app]
+    B -.-> H[Val/Test]
     F -.-> I[AB rollout]
+```
+
+ASCII (fallback rápido):
+```
+[Cliente] -> FastAPI -> Router -> Retrieval -> Geração(OpenAI/Gemini/HF) -> Resposta
+/pedido/{id} -> orders.json
+
+FT: Exemplos -> JSONL -> Upload -> Job FT -> Modelo FT -> App
 ```
 
 ## Módulos e Responsabilidades
@@ -71,9 +80,10 @@ flowchart LR
 - `app/llm_hf.py`: pipeline de geração com Hugging Face (`HF_MODEL`), via `transformers`.
 - `app/openai_client.py`: cliente OpenAI; usa `OPENAI_API_KEY` e modelo configurável (`OPENAI_MODEL`, default gpt-4o-mini).
 - `app/gemini_client.py`: cliente Gemini; usa `GEMINI_API_KEY` ou `GOOGLE_API_KEY` e modelo configurável (`GEMINI_MODEL`, default gemini-1.5-flash).
-- `data/`: KB, pedidos, políticas, usuários, dataset de fine-tuning.
-- `docs/OVERVIEW.md`: documentação detalhada.
-- `README.md`: instruções rápidas de uso.
+- `data/source/`: KB, pedidos, políticas, usuários.
+- `data/ft/`: dataset de fine-tuning.
+- `docs/ARCHITECTURE_AND_PIPELINE.md`: esta documentação.
+- `README_QUICKSTART.md`: guia rápido; `README.md`: sumário de docs.
 
 ## Dados Mock
 - `data/source/kb.json`: FAQ/políticas curtas (pergunta, resposta, tags).
