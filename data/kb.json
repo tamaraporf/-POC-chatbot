@@ -1,0 +1,33 @@
+
+[
+  {
+    "id": "faq_entrega_atrasada",
+    "pergunta": "Meu pedido está atrasado. O que faço?",
+    "resposta": "Peça desculpas, verifique o status. Se o atraso passar 15 minutos da previsão, ofereça cupom de 10% e confira com a loja.",
+    "tags": ["entrega", "atraso", "sla"]
+  },
+  {
+    "id": "faq_reembolso",
+    "pergunta": "Como peço reembolso?",
+    "resposta": "Se o pedido não foi entregue ou chegou danificado, podemos iniciar reembolso. Solicite o número do pedido e valide o status.",
+    "tags": ["reembolso", "pagamento"]
+  },
+  {
+    "id": "faq_alergia",
+    "pergunta": "Posso trocar um item por alergia?",
+    "resposta": "Antes do preparo, tente alterar com a loja. Se já estiver em preparo, verifique possibilidade; se não der, ofereça cancelamento ou cupom.",
+    "tags": ["alergia", "troca"]
+  },
+  {
+    "id": "faq_cancelamento",
+    "pergunta": "Como cancelar meu pedido?",
+    "resposta": "Cancelamentos são possíveis antes de sair para entrega. Após coleta, avaliar reembolso parcial ou contato com entregador.",
+    "tags": ["cancelamento"]
+  },
+  {
+    "id": "faq_entregador",
+    "pergunta": "Como falo com o entregador?",
+    "resposta": "Use o chat do app ou o botão de ligação. O suporte pode intermediar mensagens.",
+    "tags": ["entregador", "contato"]
+  }
+]

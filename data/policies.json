@@ -1,0 +1,46 @@
+{
+  "reembolso": {
+    "quando_aplicar": [
+      "pedido não entregue",
+      "produto danificado",
+      "pedido cancelado antes de sair para entrega"
+    ],
+    "passos": [
+      "validar número do pedido",
+      "confirmar status com a loja",
+      "registrar motivo e fotos se houver",
+      "iniciar reembolso (prazo 3-5 dias úteis)"
+    ],
+    "limites": {
+      "max_cupom": "10%",
+      "observacao": "não oferecer compensação acima de 10% sem autorização"
+    }
+  },
+  "atraso": {
+    "sla_minutos": 15,
+    "acao": [
+      "pedir desculpas",
+      "verificar status com loja/entregador",
+      "oferecer cupom de 10% se atraso > SLA",
+      "se possível, atualizar ETA e notificar cliente"
+    ]
+  },
+  "cancelamento": {
+    "antes_de_sair": "cancelar sem custo",
+    "apos_coleta": "avaliar reembolso parcial e contato com entregador",
+    "regras": [
+      "se alimento já preparado, avaliar compensação parcial",
+      "orientar cliente sobre tempo de estorno"
+    ]
+  },
+  "alergia": {
+    "antes_preparo": "tentar alterar item com a loja",
+    "durante_preparo": "verificar possibilidade de troca",
+    "sem_troca": "oferecer cancelamento ou cupom"
+  },
+  "seguranca": {
+    "nao_coletar": ["dados de cartão", "senhas", "documento completo"],
+    "mascarar": ["telefone", "email"],
+    "evitar_promessas": "não prometer compensações fora dos limites"
+  }
+}

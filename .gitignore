@@ -1,0 +1,18 @@
+# Ambiente
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# VSCode / IDE
+.vscode/
+.idea/
+
+# Dados/cache
+.DS_Store
+
+# Logs
+*.log
+
+# Arquivos de execução
+*.sqlite3

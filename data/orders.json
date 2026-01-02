@@ -1,0 +1,34 @@
+[
+  {
+    "order_id": "PED-123",
+    "cliente": "Ana",
+    "status": "out_for_delivery",
+    "eta_minutos": 8,
+    "total": 72.50,
+    "itens": [
+      {"nome": "Pizza Marguerita", "qtd": 1},
+      {"nome": "Refrigerante", "qtd": 2}
+    ]
+  },
+  {
+    "order_id": "PED-456",
+    "cliente": "Bruno",
+    "status": "preparing",
+    "eta_minutos": 20,
+    "total": 45.90,
+    "itens": [
+      {"nome": "Hamburguer", "qtd": 2}
+    ]
+  },
+  {
+    "order_id": "PED-789",
+    "cliente": "Carla",
+    "status": "delivered",
+    "eta_minutos": 0,
+    "total": 105.20,
+    "itens": [
+      {"nome": "Sushi Combo", "qtd": 1},
+      {"nome": "Suco de Laranja", "qtd": 1}
+    ]
+  }
+]
