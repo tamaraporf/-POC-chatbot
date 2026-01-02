@@ -42,6 +42,17 @@ python -m app.ingest  # gera data/kb_index.joblib
 pytest
 ```
 
+## Rodando com Docker
+```bash
+docker build -t chatbot-entregas .
+docker run -p 8000:8000 --env-file .env chatbot-entregas
+```
+
+## Rodando com docker-compose
+```bash
+docker-compose up --build
+```
+
 ## Base conceitual (antes do código)
 
 ### RAG (Retrieval-Augmented Generation)
