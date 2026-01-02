@@ -76,12 +76,12 @@ flowchart LR
 - `README.md`: instruções rápidas de uso.
 
 ## Dados Mock
-- `data/kb.json`: FAQ/políticas curtas (pergunta, resposta, tags).
-- `data/orders.json`: pedidos mock (PED-123 etc.).
-- `data/policies.json`: políticas detalhadas (reembolso, atraso, cancelamento, alergia, segurança).
-- `data/users.json`: 100 usuários (região, tier, canal, flags, ticket médio).
-- `data/ft_openai.jsonl`: exemplos de chat para FT (tom empático, respostas curtas).
-- Índice vetorial: `data/kb_index.joblib` (gerado com `python -m app.ingest`), usado pelo `VectorRetriever`.
+- `data/source/kb.json`: FAQ/políticas curtas (pergunta, resposta, tags).
+- `data/source/orders.json`: pedidos mock (PED-123 etc.) para status/reembolso/cancelamento.
+- `data/source/users.json`: 100 usuários mock (perfil, região, tier, canal) para personalização/segmentação.
+- `data/source/policies.json`: políticas detalhadas (reembolso, atraso, cancelamento, alergia, segurança).
+- `data/ft/ft_openai.jsonl`: exemplos de chat para FT (tom empático, respostas curtas).
+- Índice vetorial: `data/cache/kb_index.joblib` (gerado com `python -m app.ingest`), usado pelo `VectorRetriever`.
 
 ## Fluxo `/chat` (detalhado)
 1) Recebe `mensagem` em POST `/chat`.

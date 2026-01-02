@@ -50,9 +50,9 @@ def _load_hf_pipeline():
 
 app = FastAPI(title="Chatbot Suporte Entregas", version="0.1.0")
 data_dir = Path(__file__).resolve().parent.parent / "data"
-kb_path = data_dir / "kb.json"
+kb_path = data_dir / "source" / "kb.json"
 retriever = KnowledgeBaseRetriever(kb_path)
-index_path = data_dir / "kb_index.joblib"
+index_path = data_dir / "cache" / "kb_index.joblib"
 vector_retriever = VectorRetriever(index_path, top_k=3) if index_path.exists() else None
 USE_HF = os.getenv("HF_MODEL") is not None
 hf_pipe = _load_hf_pipeline() if USE_HF else None

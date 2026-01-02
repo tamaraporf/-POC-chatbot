@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Dict, Any
 
-ORDERS_PATH = Path(__file__).resolve().parent.parent / "data" / "orders.json"
+ORDERS_PATH = Path(__file__).resolve().parent.parent / "data" / "source" / "orders.json"
 
 
 def _load_orders() -> Dict[str, Any]:

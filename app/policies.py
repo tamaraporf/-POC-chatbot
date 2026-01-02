@@ -1,10 +1,10 @@
-"""Utilitário para políticas mockadas carregadas de data/policies.json."""
+"""Utilitário para políticas mockadas carregadas de data/source/policies.json."""
 
 import json
 from pathlib import Path
 from typing import Any, Dict
 
-POLICIES_PATH = Path(__file__).resolve().parent.parent / "data" / "policies.json"
+POLICIES_PATH = Path(__file__).resolve().parent.parent / "data" / "source" / "policies.json"
 
 
 def load_policies() -> Dict[str, Any]:

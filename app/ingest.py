@@ -9,8 +9,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-KB_PATH = DATA_DIR / "kb.json"
-INDEX_PATH = DATA_DIR / "kb_index.joblib"
+KB_PATH = DATA_DIR / "source" / "kb.json"
+INDEX_PATH = DATA_DIR / "cache" / "kb_index.joblib"
 
 
 def load_kb() -> List[Dict[str, Any]]:

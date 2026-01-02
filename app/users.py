@@ -1,10 +1,10 @@
-"""Utilitário para usuários mockados carregados de data/users.json."""
+"""Utilitário para usuários mockados carregados de data/source/users.json."""
 
 import json
 from pathlib import Path
 from typing import Any, Dict
 
-USERS_PATH = Path(__file__).resolve().parent.parent / "data" / "users.json"
+USERS_PATH = Path(__file__).resolve().parent.parent / "data" / "source" / "users.json"
 
 
 def load_users() -> Dict[str, Any]:
