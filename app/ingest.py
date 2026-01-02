@@ -1,4 +1,5 @@
 """Script simples de ingestão para gerar índice vetorial (TF-IDF) a partir do KB."""
+
 import json
 from pathlib import Path
 from typing import List, Dict, Any

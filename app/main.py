@@ -6,6 +6,7 @@ Fluxo:
 - Se houver `HF_MODEL`, gera resposta com modelo Hugging Face usando a evidência do KB.
 - Se nada for encontrado, pede mais detalhes ao usuário.
 """
+
 import os
 import logging
 from pathlib import Path
@@ -66,8 +67,12 @@ logger.info("GEMINI ativo? %s", gemini_model is not None)
 @app.on_event("startup")
 async def log_model_status() -> None:
     """Loga status do modelo HF na inicialização."""
-    logger.info("Startup: HF_MODEL=%s | pipeline carregado=%s", USE_HF, hf_pipe is not None)
-    logger.info("Startup: OPENAI ativo=%s modelo=%s", openai_client is not None, OPENAI_MODEL)
+    logger.info(
+        "Startup: HF_MODEL=%s | pipeline carregado=%s", USE_HF, hf_pipe is not None
+    )
+    logger.info(
+        "Startup: OPENAI ativo=%s modelo=%s", openai_client is not None, OPENAI_MODEL
+    )
     logger.info("Startup: GEMINI ativo=%s", gemini_model is not None)
     print(f"Startup: HF_MODEL={USE_HF} | pipeline carregado={hf_pipe is not None}")
     print(f"Startup: OPENAI ativo={openai_client is not None} modelo={OPENAI_MODEL}")
@@ -221,7 +226,11 @@ def chat(req: ChatRequest) -> ChatResponse:
     )
 
 
-@app.get("/pedido/{order_id}", response_model=OrderResponse, dependencies=[Depends(verify_api_key)])
+@app.get(
+    "/pedido/{order_id}",
+    response_model=OrderResponse,
+    dependencies=[Depends(verify_api_key)],
+)
 def pedido(order_id: str) -> OrderResponse:
     """Consulta um pedido mock pelo ID (formato PED-123)."""
     order = get_order(order_id)

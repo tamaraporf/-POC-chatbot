@@ -1,4 +1,5 @@
 """Conector simples para OpenAI Chat Completions."""
+
 import os
 from typing import Any, Dict, List
 

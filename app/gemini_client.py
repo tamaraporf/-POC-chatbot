@@ -1,4 +1,5 @@
 """Conector simples para Gemini (Google Generative AI)."""
+
 import os
 from typing import Optional
 
@@ -23,7 +24,9 @@ def get_gemini_model(model_name: Optional[str] = None):
         return None
 
 
-def generate_with_context(model, pergunta: str, evidencia: str, max_output_tokens: int = 180) -> str:
+def generate_with_context(
+    model, pergunta: str, evidencia: str, max_output_tokens: int = 180
+) -> str:
     """Gera resposta usando evidência como base."""
     prompt = (
         "Você é um atendente de suporte de entregas. Responda em português, em até 2 frases curtas, "
@@ -32,5 +35,8 @@ def generate_with_context(model, pergunta: str, evidencia: str, max_output_token
         f"Evidência: {evidencia}\n"
         "Resposta:"
     )
-    resp = model.generate_content(prompt, generation_config={"max_output_tokens": max_output_tokens, "temperature": 0})
+    resp = model.generate_content(
+        prompt,
+        generation_config={"max_output_tokens": max_output_tokens, "temperature": 0},
+    )
     return resp.text.strip()

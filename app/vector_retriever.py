@@ -1,4 +1,5 @@
 """Retriever baseado em índice TF-IDF salvo em disco."""
+
 from pathlib import Path
 from typing import List, Dict, Any
 
@@ -20,7 +21,9 @@ class VectorRetriever:
             return []
         query_vec = self.vectorizer.transform([query])
         scores = cosine_similarity(query_vec, self.matrix).flatten()
-        ranked = sorted(zip(self.docs, scores), key=lambda x: x[1], reverse=True)[: self.top_k]
+        ranked = sorted(zip(self.docs, scores), key=lambda x: x[1], reverse=True)[
+            : self.top_k
+        ]
         results = []
         for doc, score in ranked:
             entry = doc.copy()

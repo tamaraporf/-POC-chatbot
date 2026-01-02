@@ -43,9 +43,9 @@ class KnowledgeBaseRetriever:
             return []
         query_vec = self._vectorizer.transform([query])
         scores = cosine_similarity(query_vec, self._matrix).flatten()
-        ranked = sorted(
-            zip(self._docs, scores), key=lambda x: x[1], reverse=True
-        )[: self.top_k]
+        ranked = sorted(zip(self._docs, scores), key=lambda x: x[1], reverse=True)[
+            : self.top_k
+        ]
         results = []
         for doc, score in ranked:
             entry = doc.copy()

@@ -1,4 +1,5 @@
 """Utilitário para ler pedidos mock e buscar por order_id."""
+
 import json
 from pathlib import Path
 from typing import Dict, Any

@@ -42,6 +42,15 @@ python -m app.ingest  # gera data/kb_index.joblib
 pytest
 ```
 
+### Formatação (Black)
+- Configuração no `pyproject.toml`.
+- Dependência em `requirements-dev.txt` (black).
+- Com rede liberada:
+```bash
+pip install -r requirements-dev.txt
+black .
+```
+
 ## Rodando com Docker
 ```bash
 docker build -t chatbot-entregas .
